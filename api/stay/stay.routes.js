@@ -25,3 +25,5 @@ router.post('/:id/msg', requireAuth, addStayMsg)
 router.delete('/:id/msg/:msgId', requireAuth, removeStayMsg)
 
 export const stayRoutes = router
+
+
