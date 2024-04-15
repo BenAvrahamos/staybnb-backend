@@ -82,12 +82,8 @@ async function query(filterBy) {
         
 
         const collection = await dbService.getCollection('stay')
-<<<<<<< HEAD
-        var stayCursor = await collection.find()
-=======
         var stayCursor = await collection.find(criteria)
 
->>>>>>> 9aca31ca23d0366c236f12a1718eb9b5d9588d85
         const stays = stayCursor.toArray()
         return stays
     } catch (err) {
