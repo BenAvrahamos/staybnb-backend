@@ -7,13 +7,87 @@ const { ObjectId } = mongodb
 const PAGE_SIZE = 3
 
 
-async function query() {
+async function query(filterBy) {
+    console.log("🚀 ~ query ~ filterBy:", filterBy)
     try {
-        // const criteria = {
-        //     vendor: { $regex: filterBy.txt, $options: 'i' }
+        const criteria = {}
+
+        if (filterBy.guestCount.adults > 1 || filterBy.guestCount.children) {
+            const filterCapacity = parseInt(filterBy.guestCount.adults || 0) + parseInt(filterBy.guestCount.children || 0);
+            criteria.capacity = { $gte: filterCapacity };
+        }
+
+        if (filterBy.guestCount.pets !== "0") {
+            criteria.amenities = { $in: ['pets allowed', 'Pets are welcome', 'Allows pets on property', 'Allows pets as host'] };
+        }
+
+        if (filterBy.guestCount.infants !== "0") {
+            criteria.amenities = { $in: ['Crib'] };
+        }
+
+
+        if (filterBy.amenities && filterBy.amenities.length > 0) {
+            const formattedAmenities = filterBy.amenities.map(amenity => {
+                return amenity.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase());
+            });
+            criteria.amenities = { $all: formattedAmenities };
+        }
+
+        if (filterBy.label) {
+            const formattedLabel = filterBy.label[0].replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase());
+            criteria.labels = { $in: [formattedLabel] };
+        }
+
+        if (filterBy.entryDate && filterBy.exitDate) {
+            criteria.$or = [
+                {
+                    bookedDates: {
+                        $not: {
+                            $elemMatch: {
+                                $and: [
+                                    { entryDate: { $lt: +filterBy.exitDate } },
+                                    { exitDate: { $gt: +filterBy.entryDate } }
+                                ]
+                            }
+                        }
+                    }
+                },
+                { bookedDates: { $exists: false } }
+            ]
+        }
+
+        if (filterBy.bathrooms !== 'any') {
+            criteria.bathrooms = { $gte: +filterBy.bathrooms };
+        }
+
+        if (filterBy.beds !== 'any') {
+            criteria.sumOfBeds = { $gte: +filterBy.beds };
+        }
+
+        if (filterBy.placeType === "entire home") {
+            criteria.placeType = "An entire home";
+        } else if (filterBy.placeType === "room") {
+            criteria.placeType = "Room";
+        }
+        // if (filterBy.bedrooms !== 'any') {
+        //     const requiredBedrooms = parseInt(filterBy.bedrooms);
+        //     criteria.bedroomsCount = { $gte: +requiredBedrooms };
         // }
+
+        if (filterBy.propType && filterBy.propType.length > 0) {
+            const capitalizedTypes = filterBy.propType.map(type => type.charAt(0).toUpperCase() + type.slice(1));
+            criteria.propertyType = { $in: capitalizedTypes }
+        }
+
+        
+
         const collection = await dbService.getCollection('stay')
+<<<<<<< HEAD
         var stayCursor = await collection.find()
+=======
+        var stayCursor = await collection.find(criteria)
+
+>>>>>>> 9aca31ca23d0366c236f12a1718eb9b5d9588d85
         const stays = stayCursor.toArray()
         return stays
     } catch (err) {

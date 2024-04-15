@@ -3,9 +3,27 @@ import { logger } from '../../services/logger.service.js'
 
 export async function getStays(req, res) {
     try {
-        logger.debug('Getting Stays:', req.query)
+        const filterBy = {
+            accessibility: req.query.accessibility || [],
+            amenities: req.query.amenities || [],
+            bathrooms: req.query.bathrooms || "",
+            bedrooms: req.query.bedrooms || "",
+            beds: req.query.beds || "",
+            bookingOpts: req.query.bookingOpts || {},
+            entryDate: req.query.entryDate || "",
+            exitDate: req.query.exitDate || "",
+            guestCount: req.query.guestCount || { adults: "", children: "", infants: "", pets: "" },
+            hostLngs: req.query.hostLngs || [],
+            label: req.query.label || "",
+            loc: req.query.loc || {},
+            placeType: req.query.placeType || "",
+            priceRange: req.query.priceRange || { min: "", max: "" },
+            propType: req.query.propType || []
+        }
 
-        const stays = await stayService.query()
+        logger.debug('Getting Stays:', filterBy)
+
+        const stays = await stayService.query(filterBy)
         res.json(stays)
     } catch (err) {
         logger.error('Failed to get stays', err)
