@@ -14,7 +14,6 @@ async function query() {
         // }
         const collection = await dbService.getCollection('stay')
         var stayCursor = await collection.find()
-
         const stays = stayCursor.toArray()
         return stays
     } catch (err) {
