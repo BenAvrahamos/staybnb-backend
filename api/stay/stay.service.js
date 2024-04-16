@@ -88,16 +88,9 @@ async function query(filterBy) {
         }
 
         const collection = await dbService.getCollection('stay')
-<<<<<<< HEAD
-        var stayCursor = await collection.find(criteria)
-        
-        const stays = stayCursor
-        return stays.limit(+filterBy.pagination).toArray()
-=======
         const stayCursor = await collection.find(criteria).limit(+filterBy.pagination)
         const stays = await stayCursor.toArray()
         return stays
->>>>>>> b057af0da0bebb026c979f7cef06b45f91ab3493
     } catch (err) {
         logger.error('cannot find stays', err)
         throw err
