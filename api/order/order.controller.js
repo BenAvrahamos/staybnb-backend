@@ -24,6 +24,16 @@ export async function getOrderById(req, res) {
     }
 }
 
+export async function getOrderByUserId(req, res) {
+    try {
+        const userId = req.params.id;
+        const orders = await orderService.query({ 'buyer._id': userId });
+        res.json(orders);
+    } catch (err) {
+        logger.error('Failed to get order', err);
+        res.status(400).send({ err: 'Failed to get order' });
+    }
+}
 export async function addOrder(req, res) {
     const { loggedinUser } = req
 
