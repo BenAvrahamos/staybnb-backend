@@ -14,7 +14,7 @@ async function query() {
         // }
         const collection = await dbService.getCollection('order')
         var orderCursor = await collection.find()
-console.log(collection);
+        console.log(collection)
         const orders = orderCursor.toArray()
         return orders
     } catch (err) {

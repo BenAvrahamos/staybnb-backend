@@ -6,8 +6,8 @@ export async function getStays(req, res) {
         const filterBy = {
             accessibility: req.query.accessibility || [],
             amenities: req.query.amenities || [],
-            bathrooms: req.query.bathrooms || "",
-            bedrooms: req.query.bedrooms || "",
+            bathrooms: req.query.bathrooms || 0,
+            bedrooms: req.query.bedrooms || "any",
             beds: req.query.beds || "",
             bookingOpts: req.query.bookingOpts || {},
             entryDate: req.query.entryDate || "",

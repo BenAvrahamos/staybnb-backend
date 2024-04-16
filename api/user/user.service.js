@@ -13,11 +13,10 @@ export const userService = {
     getByUsername   // Used for Login
 }
 
-async function query(filterBy = {}) {
-    const criteria = _buildCriteria(filterBy)
+async function query() {
     try {
         const collection = await dbService.getCollection('user')
-        var users = await collection.find(criteria).toArray()
+        var users = await collection.find().toArray()
         users = users.map(user => {
             delete user.password
             user.createdAt = new ObjectId(user._id).getTimestamp()
@@ -78,7 +77,9 @@ async function update(user) {
         const userToSave = {
             _id: new ObjectId(user._id), // needed for the returnd obj
             fullname: user.fullname,
-            score: user.score,
+            gender: user.gender,
+            location: user.location, 
+            about: user.about
         }
         const collection = await dbService.getCollection('user')
         await collection.updateOne({ _id: userToSave._id }, { $set: userToSave })
@@ -97,7 +98,9 @@ async function add(user) {
             password: user.password,
             fullname: user.fullname,
             imgUrl: user.imgUrl,
-            score: 100
+            location: user.location,
+            about: user.about,
+            
         }
         const collection = await dbService.getCollection('user')
         await collection.insertOne(userToAdd)

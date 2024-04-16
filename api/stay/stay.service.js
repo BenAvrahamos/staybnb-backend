@@ -12,16 +12,16 @@ async function query(filterBy) {
     try {
         const criteria = {}
 
-        if (filterBy.guestCount.adults > 1 || filterBy.guestCount.children) {
+        if (+filterBy.guestCount.adults > 1 || +filterBy.guestCount.children) {
             const filterCapacity = parseInt(filterBy.guestCount.adults || 0) + parseInt(filterBy.guestCount.children || 0);
             criteria.capacity = { $gte: filterCapacity };
         }
 
-        if (filterBy.guestCount.pets !== "0") {
+        if (+filterBy.guestCount.pets) {
             criteria.amenities = { $in: ['pets allowed', 'Pets are welcome', 'Allows pets on property', 'Allows pets as host'] };
         }
 
-        if (filterBy.guestCount.infants !== "0") {
+        if (+filterBy.guestCount.infants) {
             criteria.amenities = { $in: ['Crib'] };
         }
 
@@ -79,13 +79,9 @@ async function query(filterBy) {
             criteria.propertyType = { $in: capitalizedTypes }
         }
 
-
-
         const collection = await dbService.getCollection('stay')
         var stayCursor = await collection.find(criteria)
         
-
-
         const stays = stayCursor
         return stays.limit(+filterBy.pagination).toArray()
     } catch (err) {
