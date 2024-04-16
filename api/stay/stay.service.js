@@ -12,11 +12,11 @@ async function query(filterBy) {
     try {
         const criteria = {}
 
-        if (filterBy.priceRange && filterBy.priceRange.min !== undefined && filterBy.priceRange.max !== undefined) {
+        if (filterBy.priceRange.min && filterBy.priceRange.max < Infinity) {
             criteria.price = {
                 $gte: +filterBy.priceRange.min,
                 $lte: +filterBy.priceRange.max
-            };
+            }
         }
 
         if (filterBy.guestCount.adults > 1 || filterBy.guestCount.children) {
@@ -87,6 +87,7 @@ async function query(filterBy) {
             criteria.propertyType = { $in: capitalizedTypes }
         }
 
+        logger.info(criteria)
         const collection = await dbService.getCollection('stay')
         const stayCursor = await collection.find(criteria).limit(+filterBy.pagination)
         const stays = await stayCursor.toArray()
