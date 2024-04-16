@@ -7,18 +7,14 @@ const { ObjectId } = mongodb
 const PAGE_SIZE = 3
 
 
-async function query() {
+async function query(criteria = {}) {
     try {
-        // const criteria = {
-        //     vendor: { $regex: filterBy.txt, $options: 'i' }
-        // }
         const collection = await dbService.getCollection('order')
-        var orderCursor = await collection.find()
-console.log(collection);
-        const orders = orderCursor.toArray()
+        const orderCursor = await collection.find(criteria)
+        const orders = await orderCursor.toArray()
         return orders
     } catch (err) {
-        logger.error('cannot find orders', err)
+        logger.error('Cannot find orders', err)
         throw err
     }
 }

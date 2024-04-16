@@ -33,6 +33,15 @@ export function setupSocketAPI(server) {
             socket.broadcast.to(socket.myTopic).emit('chat-add-msg', msg)
         })
 
+        socket.on('order-update', data => {
+            logger.info(`New chat msg from socket [id: ${socket.id}], emitting to topic ${socket.myTopic}`)
+            // emits to all sockets:
+            // gIo.emit('chat addMsg', msg)
+            // emits only to sockets in the same room except the sender!
+            gIo.emit('order-update', data)
+            // broadcast({ type: 'order-update', data })
+        })
+
         socket.on('user-watch', userId => {
             logger.info(`user-watch from socket [id: ${socket.id}], on user ${userId}`)
             socket.join('watching:' + userId)

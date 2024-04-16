@@ -12,6 +12,13 @@ async function query(filterBy) {
     try {
         const criteria = {}
 
+        if (filterBy.priceRange && filterBy.priceRange.min !== undefined && filterBy.priceRange.max !== undefined) {
+            criteria.price = {
+                $gte: +filterBy.priceRange.min,
+                $lte: +filterBy.priceRange.max
+            };
+        }
+
         if (filterBy.guestCount.adults > 1 || filterBy.guestCount.children) {
             const filterCapacity = parseInt(filterBy.guestCount.adults || 0) + parseInt(filterBy.guestCount.children || 0);
             criteria.capacity = { $gte: filterCapacity };
@@ -69,11 +76,12 @@ async function query(filterBy) {
         } else if (filterBy.placeType === "room") {
             criteria.placeType = "Room";
         }
-        if (filterBy.bedrooms !== 'any') {
-            const requiredBedrooms = parseInt(filterBy.bedrooms);
-            criteria.bedroomsCount = { $gte: +requiredBedrooms };
-        }
+        // if (filterBy.bedrooms !== 'any') {
+        //     const requiredBedrooms = parseInt(filterBy.bedrooms);
+        //     criteria.bedroomsCount = { $gte: +requiredBedrooms };
+        // }
 
+ 
         if (filterBy.propType && filterBy.propType.length > 0) {
             const capitalizedTypes = filterBy.propType.map(type => type.charAt(0).toUpperCase() + type.slice(1));
             criteria.propertyType = { $in: capitalizedTypes }
@@ -82,12 +90,9 @@ async function query(filterBy) {
 
 
         const collection = await dbService.getCollection('stay')
-        var stayCursor = await collection.find(criteria)
-        
-
-
-        const stays = stayCursor
-        return stays.limit(+filterBy.pagination).toArray()
+        const stayCursor = await collection.find(criteria).limit(+filterBy.pagination)
+        const stays = await stayCursor.toArray()
+        return stays
     } catch (err) {
         logger.error('cannot find stays', err)
         throw err
