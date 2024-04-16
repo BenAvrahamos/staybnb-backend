@@ -69,23 +69,25 @@ async function query(filterBy) {
         } else if (filterBy.placeType === "room") {
             criteria.placeType = "Room";
         }
-        // if (filterBy.bedrooms !== 'any') {
-        //     const requiredBedrooms = parseInt(filterBy.bedrooms);
-        //     criteria.bedroomsCount = { $gte: +requiredBedrooms };
-        // }
+        if (filterBy.bedrooms !== 'any') {
+            const requiredBedrooms = parseInt(filterBy.bedrooms);
+            criteria.bedroomsCount = { $gte: +requiredBedrooms };
+        }
 
         if (filterBy.propType && filterBy.propType.length > 0) {
             const capitalizedTypes = filterBy.propType.map(type => type.charAt(0).toUpperCase() + type.slice(1));
             criteria.propertyType = { $in: capitalizedTypes }
         }
 
-        
+
 
         const collection = await dbService.getCollection('stay')
         var stayCursor = await collection.find(criteria)
+        
 
-        const stays = stayCursor.toArray()
-        return stays
+
+        const stays = stayCursor
+        return stays.limit(+filterBy.pagination).toArray()
     } catch (err) {
         logger.error('cannot find stays', err)
         throw err

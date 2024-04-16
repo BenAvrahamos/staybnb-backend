@@ -18,7 +18,8 @@ export async function getStays(req, res) {
             loc: req.query.loc || {},
             placeType: req.query.placeType || "",
             priceRange: req.query.priceRange || { min: "", max: "" },
-            propType: req.query.propType || []
+            propType: req.query.propType || [],
+            pagination: req.query.pagination || 30
         }
 
         logger.debug('Getting Stays:', filterBy)
