@@ -35,11 +35,8 @@ export async function getOrderByUserId(req, res) {
     }
 }
 export async function addOrder(req, res) {
-    const { loggedinUser } = req
-
     try {
         const order = req.body
-        order.owner = loggedinUser
         const addedOrder = await orderService.add(order)
         res.json(addedOrder)
     } catch (err) {
