@@ -55,8 +55,16 @@ async function add(order) {
 async function update(order) {
     try {
         const orderToSave = {
-            vendor: order.vendor,
-            price: order.price
+            _id: new ObjectId(order._id),
+            hostId: order.hostId,
+            buyer: order.buyer,
+            totalPrice: order.totalPrice,
+            entryDate: order.entryDate,
+            exitDate: order.exitDate,
+            guests: order.guests,
+            stay: order.stay,
+            msgs: order.msgs,
+            status: order.status,
         }
         const collection = await dbService.getCollection('order')
         await collection.updateOne({ _id: new ObjectId(order._id) }, { $set: orderToSave })

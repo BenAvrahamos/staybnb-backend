@@ -17,7 +17,7 @@ export async function getStays(req, res) {
             label: req.query.label || "",
             loc: req.query.loc || {},
             placeType: req.query.placeType || "",
-            priceRange: req.query.priceRange || { min: "", max: "" },
+            priceRange: req.query.priceRange || { min: 0, max: Infinity },
             propType: req.query.propType || [],
             pagination: req.query.pagination || 30
         }
