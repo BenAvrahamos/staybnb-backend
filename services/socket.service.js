@@ -39,6 +39,8 @@ export function setupSocketAPI(server) {
             // gIo.emit('chat addMsg', msg)
             // emits only to sockets in the same room except the sender!
             gIo.emit('order-update', data)
+            
+            gIo.emit('prompt-notification', data)
             // broadcast({ type: 'order-update', data })
         })
 
@@ -55,6 +57,11 @@ export function setupSocketAPI(server) {
         socket.on('unset-user-socket', () => {
             logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
             delete socket.userId
+        })
+
+        socket.on('add-order' , orderToAdd => {
+            logger.info(`Adding order for user id: ${orderToAdd.buyer._id}`)
+            emitTo({ type: 'add-order', data: orderToAdd })
         })
 
     })
@@ -102,6 +109,7 @@ async function broadcast({ type, data, room = null, userId }) {
 
 async function _getUserSocket(userId) {
     const sockets = await _getAllSockets()
+    console.log('getuscerscokeets test',userId);
     const socket = sockets.find(s => s.userId === userId)
     return socket
 }

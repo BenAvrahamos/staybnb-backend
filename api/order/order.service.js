@@ -70,7 +70,7 @@ async function update(order) {
         await collection.updateOne({ _id: new ObjectId(order._id) }, { $set: orderToSave })
         return order
     } catch (err) {
-        logger.error(`cannot update order ${orderId}`, err)
+        logger.error(`cannot update order ${order._id}`, err)
         throw err
     }
 }
